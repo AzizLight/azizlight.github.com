@@ -1,0 +1,219 @@
+---
+layout: post
+title: irssi on Mac OS X
+published: false
+---
+
+<!--
+I turned this post back to a draft (published: false) because its formatting
+is a mess. I will publish it again when I reformat it and reorganize the sections
+I also moved the post to the _drafts folder, which is ignored by jekyll
+-->
+
+There are two "good" IRC clients with GUIs on OS X:
+
+* [Colloquy](http://colloquy.info/) (Free)
+* [Linkinus](http://conceitedsoftware.com/products/linkinus) (Commercial)
+
+Both of those IRC clients have an iPhone version (both are non-free) &mdash; I tried briefly Colloquy.
+
+Even though I'm a big fan of Linkinus, I'm an even bigger fan of irssi &mdash; I'm a geek(-wannabe) after all.
+
+[irssi](http://www.irssi.org/) is a CLI IRC client, and, believe it or not, it is as powerful, if not more powerful, than both Linkinus and Colloquy.
+
+##Install irssi
+
+The easiest (and probably cleanest) way to install irssi, is by using [MacPorts](http://www.macports.org/). I won't explain how to install MacPorts itself since it's already very well explained [here](http://www.macports.org/install.php).
+ Once you have MacPorts installed, type the following command in **Terminal.app**:
+
+{% highlight console %}
+sudo port install irssi +perl
+{% endhighlight %}
+
+The `+perl` keyword is very important because without it, you won't be able to use scripts. If however you already installed irssi using the port command, but forgot to use the `+per` flag, then you can upgrade your install with the following command:
+
+{% highlight console %}
+sudo port upgrade --enforce-variants irssi +perl
+{% endhighlight %}
+
+##Configuring irssi
+
+Once you installed irssi, launch it by typing `irssi` in **Terminal.app**. First, let's set some basic configuration variables. To get a list of all the configuration variables, type `/set`. To set the value of a configuration variable, use the following syntax:
+
+{% highlight text %}
+/set key value
+{% endhighlight %}
+
+Let's set a couple variables:
+
+{% highlight text %}
+/set real_name = "Aziz Light"
+/set user_name = aziz
+/set nick = AzizLight
+/set alternate_nick = aziz
+{% endhighlight %}
+
+irssi comes with some networks in memory. You can see them using the following command:
+
+{% highlight text %}
+/network list
+{% endhighlight %}
+
+I don't like those networks that come pre-configured, let's remove them.
+
+{% highlight text %}
+/network remove IRCnet
+/network remove EFNet
+...
+{% endhighlight %}
+
+Now let's add a new network. I like the Freenode network:
+
+{% highlight text %}
+/network add -autosendcmd '/msg nickserv identify password' Freenode
+{% endhighlight %}
+
+The `-autosendcmd` is optional. What it does is automatically execute a command (or multiple commands, separated by semi-colons (;)) as soon as you get connected to the a server on the network. Now we need to add a new server, but before we do that, I would like to remove the default ones.
+
+{% highlight text %}
+/server list
+/server remove open.ircnet.net
+/server remove irc.efnet.org
+...
+{% endhighlight %}
+
+Now that we removed all the servers, let's add a new one:
+
+{% highlight text %}
+/server add -auto -network Freenode irc.freenode.net
+{% endhighlight %}
+
+The `-auto` option is used to automatically join the server when irssi is launched. The `-network` option associates the server to the Freenode network. We can finally connect to the Freenode server!
+
+{% highlight text %}
+/server Freenode
+{% endhighlight %}
+
+It's as simple as that! Now that we are connected to the server, we can work on channels. First let's remove the default channels:
+
+{% highlight text %}
+/channel list
+/channel remove #irssi IRCnet
+...
+{% endhighlight %}
+
+Notice that to remove a channel you need to specify the name of the channel (starting by `#`) and the name of the network it belongs to. Let's add a couple new channels:
+
+{% highlight text %}
+/channel add #codeigniter Freenode
+/channel add #pyrocms Freenode
+{% endhighlight %}
+
+The same way as the removal process, you need to specify the channel's name and the network when you add a new channel. As a finishing touch, I will set irssi to highlight any messages containing my name or nickname:
+
+{% highlight text %}
+/hilight Aziz aziz AzizLight azizlight
+{% endhighlight %}
+
+When you're done, save your configuration:
+
+{% highlight text %}
+/save
+{% endhighlight %}
+
+The configuration will be save in `~/.irssi/config`.
+
+*Note: The next section will talk about scripts and how to configure them. If you want to learn how to use irssi right away, skip to the next section and come back to this one later*
+
+##Installing Scripts
+
+irssi has **a lot** of scripts. You can find *most* of them on the official site in the [Scripts section](http://scripts.irssi.org/). First of all, create the *scripts* folder in `~/.irssi/` and the *autorun* folder in `~/.irssi/scripts/`:
+
+{% highlight console %}
+mkdir -vp ~/.irssi/scripts/autorun/
+{% endhighlight %}
+
+To install a script, you need to move it to the *scripts* folder. To autorun a script, add a symbolic link to it in the autorun folder (I autorun all of my scripts):
+
+{% highlight console %}
+cd ~/.irssi/scripts/autorun/
+ln -s ../scriptname.pl
+{% endhighlight %}
+
+Here is a list of all the scripts I use:
+
+* [adv_windowlist.pl](http://anti.teamidiot.de/static/nei/*/Code/Irssi/adv_windowlist.pl): This is one of the scripts that is not available via the official site. What this does is add the names of the channels you're in in the status bar so that it's easier to switch windows. If you're never used irssi before, then you probably won't see a difference, but this script IS amazingly useful. This script doesn't require any configuration.
+* [autochannel.pl](http://scripts.irssi.org/scripts/autochannel.pl): This scripts adds channels to your "favorites" automatically &mdash; To see a list of all your "favorite" channels, type `/channel list`. The advantage of that is that all the channels that are in your favorites can be "auto-completed" using the **Tab&#x21E5;** key. To configure this script, use the `/set` command to set values for one of those settings:
+	* **channel_add_on_join**: If this is set to `1`, every time you join a channel, it will be added to you "favorites" automatically.  
+	*What I use: **`1`***
+	* **channel_add_with_auto**: If *channel_add_on_join* is set to `1` and *channel_add_with_auto* is also set to `1`, then every time a channel is added automatically by `autochannel.pl` is will also have the *auto* flag. What that means, is that every time irssi launches, you will automatically join that channel.  
+	*What I use: **`0`***
+	* **channel_remove_auto_on_part**: This basically cancels the previous setting (in a way). If that is set to `1`, every time you part a channel (using the `/part` command), the *auto* flag will be removed from that channel (if it is in your favorites)  
+	*Note that the auto flag will be removed even if the channel wasn't added automatically by the script*.  
+	*What I use: **`0`***
+	* **channel_remove_on_part**: If set to `1`, the channel will be removed from your favorites as soon as you leave it  
+	*Note that the channel will be removed even if it wasn't added automatically by the script*.  
+	*What I use: **`0`***
+* [history_search.pl](http://scripts.irssi.org/scripts/history_search.pl): You know the `Ctrl-R` keyboard shortcut in bash and zsh that let you search history? Well that script add the `Ctrl-R` functionality to irssi! Once you installed the script, you need to first type the following command for it to work:
+
+	<pre><code>/bind ^R /history_search</code></pre>
+
+* [nickcolor.pl](http://scripts.irssi.org/scripts/nickcolor.pl): This script gives each nickname a color so that it's easier to see who says what in a channel. The script doesn't require any configuration.
+* [trackbar.pl](http://scripts.irssi.org/scripts/trackbar.pl): This script adds a vertical line to a channel to mark the last message that you have read before switching to another channel or another application so that you don't miss anything. You can configure two things in this script (using the `/set` command):
+	* *trackbar_string*: You can choose the character that will form the vertical line. (Default: -)  
+	*What I use: **`-`***
+	* *trackbar_style*: The color of the vertical line. I changed that to `%r` which is the value for ***red***. For a list of all the color codes, check [this page](http://www.irssi.org/documentation/formats).  
+	*What I use: **`%r`***
+* [usercount.pl](http://scripts.irssi.org/scripts/usercount.pl): This script adds the number of normal users, voices, halfops and ops in a channel. Status bar customization in irssi can be pretty complex and that is something I never got into because I liked the default setup. So even though this script can be extensively customized, I just use the default setup. However, to make this script function, you need to type the following command after you install it:
+
+	<pre><code>/statusbar window add usercount</code></pre>
+
+There are other scripts that intrigue me a lot but that I didn't have the chance to use yet:
+
+* [trigger.pl](http://scripts.irssi.org/scripts/trigger.pl)
+* [twirssi.pl](http://twirssi.com/index.php): This integrates twitter to irssi. It looks absolutely awesome, but can't be installed easily, certainly not with MacPorts.  
+  
+>*Details for those who are interested: twirssi needs a perl library called Net::Twitter in its 1.7 version at least. MacPorts provides an extremely outdated version of that library (version 1.04) and lacks most of the dependencies needed to upgrade to a newer version. I have opened [a new ticket](https://trac.macports.org/ticket/25385), let's wait and see what happens next...*
+
+###The cherry on the cake: Growl!
+Yes, you read correctly, Growl notifications for irssi! First of all, you need to install *growlnotify*. It's provided with Growl, so if you don't have it installed, go ahead and do that:
+
+* [Download Growl](http://growl.info/).
+* Install Growl if you haven't already.
+* In the Disk Image (.dmg), there is an *Extras* folder in which there is the *growlnotify* folder. Copy that folder somewhere on your mac and open it in a terminal and run the install.sh script:
+
+	<pre><code>cd ~/growlnotify/</code></pre>
+	
+	<pre><code>./install.sh</code></pre>
+
+* Go to the Growl irssi script's [git repository](http://github.com/jashmenn/irssi-growl) and download the source code.
+* Copy the `growl.pl` and **ONE** of the `.png` icons in `~/.irssi/scripts/`
+* Set the configuration variables:
+
+	<pre><code>/set growl_icon [filename]</code></pre>
+	
+	* Replace [filename] with the full name (including the extension) of the icon you chose.
+	
+	<pre><code>/set growl_on_regex [regex]</code></pre>
+	
+	* replace *[regex]* with the regular expression that will match the elements that will be notified by Growl. If you don't know how to use regex, just put your username in; that would make Growl show a notification every time your name is in a message.
+	
+	<pre><code>/set growl_channel_regex [regex]</code></pre>
+	
+	* replace *[regex]* with the regular expression that will match all the channels where Growl notifications will be active. Personally I use `.*` which means "All Channels!!".
+
+##Upcoming
+* **Section:** "Using irssi" &mdash; Section of the guide describing how to use irssi.
+
+## Related links
+
+Here are a couple links to blog posts, guides and other references that helped me understand a lot better how irssi works:
+
+* [irssi's official site](http://www.irssi.org/)
+* [irssi's official documentation](http://www.irssi.org/documentation)
+* [irssi's official scripts listing](http://scripts.irssi.org/)
+* [Twirssi: a twitter script for irssi](http://twirssi.com/index.php)
+* [A Guide to Efficiently Using Irssi and Screen](http://quadpoint.org/articles/irssi)
+* [How to use screen and irssi](http://lizzie.spod.cx/screenirssi.shtml)
+
+***Note: This guide is a work in progress. It will be continuously updated until I am satisfied with the final result.***

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<title>Aziz, Light! &middot; Installing and using moc on OS X</title>
+	<meta name="description" content="Aziz Light's blog." />
+	<meta name="author" content="Aziz Light" />
+	
+	<link rel="stylesheet" href="/css/style.css" />
+
+	
+	<!-- Pygments syntax highlighting colors -->
+	<link rel="stylesheet" href="/css/syntax.css" />
+</head>
+<body>
+	<div id="page-wrap">
+		<div id="header">
+			<h1 id="blog-title"><a href="/" title="Aziz, Light!">Aziz, Light<span>!</span></a></h1>
+		</div>
+		
+		<div id="main-content">
+			<div class="post">
+	<h2 class="title">Installing and using moc on OS X</h2>
+	<div class="date">04 July, 2010</div>
+	<div class="content">
+		<p>Before I became an Apple fan-boy and after I had enough of Windows, I used GNU/Linux distributions for about three years (Ubuntu mostly, but I tried a lot of other distros too). It&#8217;s during that period that I became obsessed by command-line applications. At the time, I tried ALL the command-line music players, but only two of them stood out: moc and herrie.</p>
+
+<p>herrie is pretty good, but it was missing one <strong>very</strong> important feature that moc has: it can&#8217;t run in the background. That&#8217;s right, moc is more than a music player, it&#8217;s a music server. What that means is that once moc runs, you can close all terminal windows and moc will still run. As a minimalism enthusiast, I can say that moc is really the <strong>perfect</strong> music player.</p>
+
+<p>When I started using a Mac, I was amazingly surprised to see that <em>most</em> of the command-line tools I was addicted to were available via MacPorts, including moc. However, until a couple days ago, I was not able to use it due to an error &#8212; I didn&#8217;t really try hard to be honest. Anyway, here is how to install and use moc on OS X.</p>
+
+<h3 id='installing_moc'>Installing moc</h3>
+
+<p>First make sure you have MacPorts installed. Open an iTerm (or Terminal.app) and type the following command:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>sudo port install moc +autojack +vorbis</span>
+</code></pre>
+</div>
+<p>Now if you try to type <code>moc</code> in a terminal you will get an error saying that the <code>moc</code> command doesn&#8217;t exist. The executable is called <code>mocp</code>. However, <code>mocp</code> is a client and it needs a driver to run. <code>jack</code> is such a driver and it was installed when you installed moc. To avoid having to run jack every time you want to run moc, I created a small script that does it for you:</p>
+<div class='highlight'><pre><code class='bash'><span class='c'>#!/bin/bash</span>
+
+<span class='c'># /!\ WARNING /!\</span>
+<span class='c'># ---------------</span>
+<span class='c'># DO NOT PUT THE CONTENTS OF THIS SCRIPT INTO</span>
+<span class='c'># A FUNCTION OR ELSE MOC WILL STOP RUNNING AS</span>
+<span class='c'># SOON AS YOU CLOSE THE TERMINAL WINDOW IN WHICH</span>
+<span class='c'># IT WAS FIRST LAUNCHED!!</span>
+
+<span class='nv'>number</span><span class='o'>=</span><span class='k'>$(</span>ps aux | grep jackd | grep -v grep | wc -l<span class='k'>)</span>
+
+<span class='c'># if jackd is not running, launch it because moc needs it.</span>
+<span class='c'># the -T option makes sure that jack quits when mocp quits</span>
+<span class='c'># so that it doesn&#39;t eat up cpu for nothing</span>
+<span class='k'>if</span> <span class='o'>[[</span> ! <span class='nv'>$number</span> -gt 0 <span class='o'>]]</span>
+<span class='k'>then</span>
+<span class='k'>	</span>jackd -T -d coreaudio &amp;&gt; /dev/null &amp;
+<span class='k'>fi</span>
+
+mocp
+</code></pre>
+</div>
+<p class='label'>gist: <a href='http://gist.github.com/464586'>464586</a></p>
+
+<p>Save that code in a file called <code>moc</code> and put it somewhere in your <code>$PATH</code> &#8212; I put all the script that I write in <code>~/bin</code>. The <code>moc</code> command is now available and you don&#8217;t ever need to worry about <code>jack</code>.</p>
+
+<h3 id='using_moc'>Using moc</h3>
+
+<p>Type <code>moc</code> in iTerm (or Terminal.app) and moc should appear with a very ugly BSoD-like blue theme. To change the theme, type <code>T</code> (that&#8217;s <code>shift-t</code> not just <code>t</code>) and select the theme you like (Validate with &#8617;); press <code>esc</code> to go back to the main screen. To see a list of all the shortcuts, type <code>?</code>. Here is a very basic list of the ones a I use the most:</p>
+<div class='highlight'><pre><code class='text'>q               Detach MOC from the server
+Q               Quit
+UP/DOWN         Move up or down in the menu
+A               Add a folder to the playlist
+a               Add a file to the playlist
+C               Clear the playlist
+TAB             Switch between playlist and file list
+]               Silent seek forward 5 seconds
+[               Silent seek backwards 5 seconds
+R               Toggle repeat
+S               Toggle shuffle
+n               Play next file
+b               Play previous file
+ESC             Go back to the main screen
+?               Show the list of all the keyboard shortcuts
+</code></pre>
+</div>
+<p>Press <code>Q</code> to quit moc. If you open moc again, you will see that the default theme is used again. Before I go any further, I would like to show a theme that I found on the internet because I don&#8217;t really link any of the default themes (except for <code>transparent-background</code> which is very similar to the one I will show you):</p>
+<div class='highlight'><pre><code class='text'># Copy what&#39;s below and save it in ~/.moc/themes/moc-orpheus
+# moc-orpheus is the name of the file; don&#39;t give it an extension.
+# Also, create the themes folder if it doesn&#39;t exist.
+# I found this theme at this address:
+# http://nic-nac-project.org/~orveldv/wiki/doku.php?id=moc
+# A couple ather themes are also available there.
+
+background           = black    black   normal
+frame                = blue     black   bold
+window_title         = black    black   bold
+directory            = cyan     black   normal
+selected_directory   = cyan     black   bold
+playlist             = white    black   normal
+selected_playlist    = cyan     black   bold
+file                 = green    black   normal
+selected_file        = green    black   bold
+marked_file          = yellow   black   bold
+marked_selected_file = green    black   bold
+info                 = blue     black   bold
+status               = black    white   normal
+title                = yellow   black   bold
+state                = green    black   bold,blink
+current_time         = white    black   normal
+time_left            = black    black   bold
+total_time           = green    black   normal
+time_total_frames    = black    black   bold
+sound_parameters     = white    black   normal
+legend               = green    black   normal
+disabled             = black    black   bold
+enabled              = white    black   normal
+empty_mixer_bar      = white    black   normal
+filled_mixer_bar     = black    white   normal
+empty_time_bar       = black    black   normal
+filled_time_bar      = black    white   bold
+entry                = white    black   normal
+entry_title          = black    white   normal
+error                = yellow   black   bold
+message              = yellow   black   bold
+plist_time           = black    white   normal
+</code></pre>
+</div>
+<p class='label'>gist: <a href='http://gist.github.com/464586'>464590</a></p>
+
+<p>You have two choices to set the default theme:</p>
+
+<ol>
+<li>Edit the <code>moc</code> script you created above and append <code>-T moc-orpheus</code> to the <code>mocp</code> command on the last line.</li>
+
+<li>Create a config file and put the name of the theme you like there &#8212; that&#8217;s the solution that I prefer.</li>
+</ol>
+
+<p>I will explain how to proceed with the config file choice. Create a file named <code>config</code> (no extension) in <code>~/.moc</code> and paste the following line in it:</p>
+<div class='highlight'><pre><code class='bash'><span class='c'># /!\ WARNING /!\</span>
+<span class='c'># ---------------</span>
+<span class='c'># YOU NEED TO INSERT AT LEAST ONE BLANK LINE</span>
+<span class='c'># AT THE BOTTOM OF THE FILE OTHERWIZE YOU WILL</span>
+<span class='c'># GET A FATAL ERROR AND WON&#39;T BE ABLE TO LAUNCH MOC!</span>
+
+<span class='c'># Default theme.</span>
+<span class='nv'>Theme</span> <span class='o'>=</span> moc-orpheus
+
+<span class='c'># Turn on repeat by default.</span>
+<span class='nv'>Repeat</span> <span class='o'>=</span> yes
+</code></pre>
+</div>
+<p class='label'>gist: <a href='http://gist.github.com/464586'>464593</a></p>
+
+<p>There is an sample config file in <code>/opt/local/var/macports/software/moc/2.4.4_0+autojack+vorbis/opt/local/share/doc/moc/</code> with all the possible configuration variables that you can set.</p>
+
+<blockquote>
+<p>If you installed moc without any variants, replace <code>2.4.4_0+autojack+vorbis</code> by <code>2.4.4_0</code></p>
+</blockquote>
+
+<p>In the same folder as the sample config file, there is a sample keymap file. If you want to change any keyboard shortcut, create a <code>keymap</code> file in <code>~/.moc</code> and set your new keyboard shortcuts as demonstrated in the sample keymap file.</p>
+
+<h3 id='_two_more__things'><del>One</del> Two more <del>thing</del> things&#8230;</h3>
+
+<p>First, let&#8217;s take care of the <strong>GeekTool</strong> integration. I <del>created</del> modified a script (see the &#8220;Let me give credit where credit is due&#8221; section for more details) to display info about the current song using GeekTool:</p>
+<div class='highlight'><pre><code class='bash'><span class='c'>#!/bin/bash</span>
+
+<span class='c'># First let&#39;s check if moc is running...</span>
+<span class='k'>if</span> <span class='o'>[[</span> <span class='k'>$(</span>ps aux | grep mocp | grep -v grep | wc -l<span class='k'>)</span> -gt 0 <span class='o'>]]</span>;
+<span class='k'>then</span>
+<span class='k'>	</span>
+<span class='k'>	</span><span class='nv'>out</span><span class='o'>=</span><span class='k'>$(</span>/opt/local/bin/mocp -i<span class='k'>)</span>
+	
+	<span class='c'># Parse mocp output.</span>
+	<span class='k'>while </span><span class='nv'>IFS</span><span class='o'>=</span>: <span class='nb'>read</span> -r field value; <span class='k'>do</span>
+<span class='k'>		case</span> <span class='nv'>$field</span> in
+			Artist<span class='o'>)</span> <span class='nv'>artist</span><span class='o'>=</span><span class='nv'>$value</span>;;
+			Album<span class='o'>)</span> <span class='nv'>album</span><span class='o'>=</span><span class='nv'>$value</span>;;
+			SongTitle<span class='o'>)</span> <span class='nv'>title</span><span class='o'>=</span><span class='nv'>$value</span>;;
+		<span class='k'>esac</span>
+<span class='k'>	done</span> &lt;&lt;&lt; <span class='s2'>&quot;$out&quot;</span>
+	
+	<span class='k'>if</span> <span class='o'>[[</span> <span class='nv'>$1</span> <span class='o'>]]</span>
+	<span class='k'>then</span>
+<span class='k'>		case</span> <span class='s2'>&quot;$1&quot;</span> in
+			<span class='s1'>&#39;artist&#39;</span>|<span class='s1'>&#39;ARTIST&#39;</span>|<span class='s1'>&#39;Artist&#39;</span><span class='o'>)</span>
+				<span class='nb'>echo</span> <span class='nv'>$artist</span>
+			;;
+			<span class='s1'>&#39;song&#39;</span>|<span class='s1'>&#39;SONG&#39;</span>|<span class='s1'>&#39;Song&#39;</span><span class='o'>)</span>
+				<span class='nb'>echo</span> <span class='nv'>$title</span>
+			;;
+			<span class='s1'>&#39;album&#39;</span>|<span class='s1'>&#39;ALBUM&#39;</span>|<span class='s1'>&#39;Album&#39;</span><span class='o'>)</span>
+				<span class='nb'>echo</span> <span class='nv'>$album</span>
+			;;
+			*<span class='o'>)</span>
+				<span class='nb'>echo</span> <span class='s2'>&quot;$1&quot;</span>
+			;;
+		<span class='k'>esac</span>
+<span class='k'>	else</span>
+<span class='k'>		</span><span class='nb'>echo</span> <span class='s2'>&quot;$title by $artist (album: $album)&quot;</span>
+	<span class='k'>fi</span>
+<span class='k'>fi</span>
+</code></pre>
+</div>
+<p class='label'>gist: <a href='http://gist.github.com/464586'>464598</a></p>
+
+<p>With this script, you can selectively display the song title, the artist or the album of the song currently playing in moc. For the sake of this example, I will refer to the script above as &#8220;mi&#8221; (which is actually the name I gave it on my mac). mi takes one optional parameter:</p>
+
+<ul>
+<li><code>song</code> &#8212; displays the name of the song.</li>
+
+<li><code>artist</code> &#8212; displays the name of the artist.</li>
+
+<li><code>album</code> &#8212; displays the name of the album.</li>
+
+<li>Anything else will be outputted as text; this could be used to create labels even though it&#8217;s much easier to just use <code>echo</code> for that.</li>
+
+<li>No parameter &#8212; if no argument is passed, the script will display the song, the artist and the album.</li>
+</ul>
+
+<p>I created four geeklets that you can download <a href='http://azizlight.me/s/mocgeeklets'>here</a>. You will need to have the script above saved as <code>mi</code> in <code>~/bin</code> or else you are going to have to either edit the geeklets or create new ones.</p>
+
+<p>Finally, I worked out a way to enable Growl support. However, I tried hard and could not launch the growl script and moc at the same time without ending up having a bunch of errors. So the only solution I found is to launch the growl script manually after launching moc. After that, the script runs in the background and quits at the same time as moc. Here is the script:</p>
+<div class='highlight'><pre><code class='bash'><span class='c'>#!/bin/bash</span>
+
+<span class='k'>while </span><span class='nv'>out</span><span class='o'>=</span><span class='k'>$(</span>mocp -i<span class='k'>)</span>; <span class='k'>do</span>
+
+    <span class='c'># Parse mocp output.</span>
+    <span class='k'>while </span><span class='nv'>IFS</span><span class='o'>=</span>: <span class='nb'>read</span> -r field value; <span class='k'>do</span>
+<span class='k'>        case</span> <span class='nv'>$field</span> in
+            Artist<span class='o'>)</span> <span class='nv'>artist</span><span class='o'>=</span><span class='nv'>$value</span>;;
+            Album<span class='o'>)</span> <span class='nv'>album</span><span class='o'>=</span><span class='nv'>$value</span>;;
+            SongTitle<span class='o'>)</span> <span class='nv'>title</span><span class='o'>=</span><span class='nv'>$value</span>;;
+        <span class='k'>esac</span>
+<span class='k'>    done</span> &lt;&lt;&lt; <span class='s2'>&quot;$out&quot;</span>
+
+    <span class='c'># Don&#39;t do anything if we&#39;re still on the same song.</span>
+    <span class='o'>[[</span> <span class='s2'>&quot;$artist-$album-$title&quot;</span> <span class='o'>=</span> <span class='s2'>&quot;$current&quot;</span> <span class='o'>]]</span> <span class='o'>&amp;&amp;</span> <span class='o'>{</span> sleep 1; <span class='k'>continue</span>; <span class='o'>}</span>
+
+    <span class='c'># Growl notify this information</span>
+	<span class='k'>if</span> <span class='o'>[[</span> <span class='nv'>$album</span> <span class='o'>&amp;&amp;</span> <span class='nv'>$artist</span> <span class='o'>&amp;&amp;</span> <span class='nv'>$title</span> <span class='o'>]]</span>; <span class='k'>then</span>
+<span class='k'>		</span>growlnotify -t <span class='s2'>&quot;moc: $title&quot;</span> -n <span class='s2'>&quot;mocp&quot;</span> -m <span class='s2'>&quot;by $artist&quot;</span><span class='s1'>$&#39;\n&#39;</span><span class='s2'>&quot;(album: $album)&quot;</span>
+	<span class='k'>fi</span>
+
+    <span class='c'># Remember the current song.</span>
+    <span class='nv'>current</span><span class='o'>=</span><span class='s2'>&quot;$artist-$album-$title&quot;</span>
+
+<span class='k'>done</span>
+</code></pre>
+</div>
+<p class='label'>gist: <a href='http://gist.github.com/464586'>465244</a></p>
+
+<p>Save this script in <code>~/bin</code> as <code>mi-growl.sh</code> (or whatever you want to call it). You should run this script with this command if you want it to run in the background without outputting any errors:</p>
+<div class='highlight'><pre><code class='console'><span class='go'>mi-growl.sh &amp;&gt; /dev/null &amp;</span>
+</code></pre>
+</div>
+<p>However, it&#8217;s a pain to run this command everytime you want to enable growl support for moc, so I created an alias for it. I also added a bunch of other aliases that I use while using moc:</p>
+<div class='highlight'><pre><code class='bash'><span class='nb'>alias </span><span class='nv'>mg</span><span class='o'>=</span><span class='s2'>&quot;mi-growl.sh &amp;&gt; /dev/null &amp;&quot;</span> <span class='c'># launch growl support</span>
+<span class='nb'>alias </span><span class='nv'>mof</span><span class='o'>=</span><span class='s2'>&quot;mocp -f&quot;</span> <span class='c'># next</span>
+<span class='nb'>alias </span><span class='nv'>mor</span><span class='o'>=</span><span class='s2'>&quot;mocp -r&quot;</span> <span class='c'># prev</span>
+<span class='nb'>alias </span><span class='nv'>mop</span><span class='o'>=</span><span class='s2'>&quot;mocp -G&quot;</span> <span class='c'># play/pause</span>
+<span class='nb'>alias </span><span class='nv'>mos</span><span class='o'>=</span><span class='s2'>&quot;mocp -s&quot;</span> <span class='c'># stop</span>
+<span class='nb'>alias </span><span class='nv'>mox</span><span class='o'>=</span><span class='s2'>&quot;mocp -x&quot;</span> <span class='c'># exit</span>
+</code></pre>
+</div>
+<p class='label'>gist: <a href='http://gist.github.com/464586'>465247</a></p>
+
+<p>Put those aliases either in <code>.bash_profile</code>, <code>.bashrc</code>, <code>.bash_aliases</code>&#8230; it depends on your setup, I use oh-my-zsh and I&#8217;ve put them in my custom aliases file there.</p>
+
+<h3 id='bugs'>Bugs</h3>
+
+<p>No matter how hard I try, I can&#8217;t manage to eliminate the bugs, and there seem to be one or two of them that are kind of annoying when using moc on OS X. The most annoying one that I found, is when moc stays open with a song paused for a long time and then you try to resume that song, moc will&#8230;well the song won&#8217;t play, you&#8217;ll have to quit moc, kill the server with a bunch of <code>killall mocp</code> calls, close the terminal window, etc. In other words, I have no clue what happens, sometimes it just stops working. But if you ask me, it&#8217;s totally worth the headache since moc is definitely the most minimalistic user-friendly terminal music player.</p>
+
+<h3 id='let_me_give_credit_where_credit_is_due'>Let me give credit where credit is due</h3>
+
+<p><strong><a href='http://www.lhunath.com/'>lhunath</a></strong> from the <code>#bash</code> channel on the <code>Freenode</code> network wrote the growl script. He didn&#8217;t even have moc or growl installed so he could not do any kind of testing, which is amazing if you ask me! I also modified a bit his script to create the geektool version (I probably butchered it too&#8230;)</p>
+
+<h3 id='related_links'>Related links</h3>
+
+<ul>
+<li><a href='http://moc.daper.net/'>moc</a>: The official website.</li>
+
+<li><a href='http://nic-nac-project.org/~orveldv/wiki/doku.php?id=moc'>moc themes</a></li>
+
+<li><a href='http://www.macports.org/'>MacPorts</a></li>
+
+<li><a href='http://projects.tynsoe.org/en/geektool/'>GeekTool</a></li>
+
+<li><a href='http://growl.info/'>Growl</a></li>
+</ul>
+	</div>
+</div>
+		</div>
+		<div id="footer">
+			<p><a href="/">Aziz, Light!</a></p>
+			
+			<ul>
+				<li><a href="http://twitter.com/aziz_light">http://twitter.com/aziz_light</a></li>
+				<li><a href="http://github.com/AzizLight">http://github.com/AzizLight</a></li>
+				<li><a href="http://forrst.com/-AzizLight">http://forrst.com/-AzizLight</a></li>
+			</ul>
+			
+			<p class="go-up"><a href="#header">&#x2B06;</a></p>
+			<p><a href="#">Feed</a></p>
+		</div>
+	</div>
+</body>
+</html>
