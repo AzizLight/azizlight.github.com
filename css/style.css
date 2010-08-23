@@ -56,7 +56,7 @@ Global Styling
 ----------------------------------------------------------------------------- */
 body
 {
-    font-size: 14px;
+    font-size: 16px; /* 14 */
     font-weight: lighter;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -116,12 +116,12 @@ IDs
 ----------------------------------------------------------------------------- */
 #page-wrap
 {
-    width: 600px;
+    width: 640px;
     margin-left: 40px;
 }
 h1#blog-title
 {
-    font-size: 82px;
+    font-size: 94px; /* 82 */
     font-family: Georgia, serif;
     text-align: center;
     margin: 20px 0 40px;
@@ -221,25 +221,17 @@ Single Post
 }
 .post h2.title
 {
-    font-size: 24px;
+    font-size: 28px; /* 24 */
     font-family: Georgia;
     color: #c00;
     margin-bottom: 2px;
 }
-.post h2.title:hover
-{
-    color: #d00;
-}
 .post .date
 {
-    font-size: 13px;
+    font-size: 15px; /* 13 */
     font-family: Verdana;
     color: #cacaca;
     margin-bottom: 10px;
-}
-.post .date:hover
-{
-    color: #acacac;
 }
 .post .content
 {
@@ -247,8 +239,8 @@ Single Post
 }
 .post .content h3
 {
-    font-size: 16px;
-    font-weight: normal;
+    font-size: 18px; /* 16 */
+    font-weight: bold;
     padding: 10px 0 5px;
 }
 .post .content h3 + ul
@@ -300,7 +292,7 @@ Footer
 }
 #footer p:last-child a
 {
-    font-size: 12px;
+    font-size: 13px; /* 12 */
 }
 #footer p:first-child a:hover span
 {
@@ -321,7 +313,7 @@ Footer
 }
 #footer ul li
 {
-    font-size: 12px;
+    font-size: 13px; /* 12 */
     padding: 5px 0;
 }
 #footer ul li a
