@@ -164,10 +164,13 @@ Post List
 ul.post-list
 {
     list-style-type: none;
+    margin-left: 0;
+    margin-bottom: 40px;
 }
 ul.post-list li
 {
     padding: 5px 0;
+    position: relative;
 }
 ul.post-list li:first-child
 {
@@ -177,22 +180,10 @@ ul.post-list li:last-child
 {
     padding-bottom: 0;
 }
-ul.post-list li span
-{
-    display: inline-block;
-}
 ul.post-list li span.date
 {
-    width: 140px;
     color: #acacac;
-}
-ul.post-list li span.date:hover
-{
-    color: #929292;
-}
-ul.post-list li span.seperator
-{
-    margin-right: 5px;
+    text-align: right;
 }
 ul.post-list li a
 {
@@ -202,6 +193,17 @@ ul.post-list li a
 ul.post-list li a:hover
 {
     color: #c00;
+}
+ul.post-list li span.pointer
+{
+    display: none;
+    position: absolute;
+    left: 0;
+    margin-left: -10px;
+}
+ul.post-list li:hover span.pointer
+{
+    display: inline;
 }
 /* --------------------------------------------------------------------------
 End of Post List
@@ -283,6 +285,10 @@ Footer
     color: #acacac;
     text-decoration: none;
 }
+#footer p a:hover
+{
+    color: #000;
+}
 #footer p:last-child
 {
     position: absolute;
@@ -293,11 +299,7 @@ Footer
 {
     font-size: 12px;
 }
-#footer p:last-child a:hover
-{
-    color: #f60;
-}
-#footer p:first-child a:hover
+#footer p:first-child a:hover span
 {
     color: #fc0;
 }
@@ -309,15 +311,10 @@ Footer
     top: 0;
     margin-top: -30px;
 }
-#footer p.go-up a:hover
-{
-    color: #000;
-}
 #footer ul
 {
     list-style-type: none;
-    padding: 10px 0 0 0;
-    margin: 0;
+    margin: 10px 0 0 0;
 }
 #footer ul li
 {
@@ -331,14 +328,6 @@ Footer
 #footer ul li a:hover
 {
     color: #000;
-}
-#footer ul li:first-child a:hover
-{
-    color: #3cf;
-}
-#footer ul li:last-child a:hover
-{
-    color: #5b9a68;
 }
 /* --------------------------------------------------------------------------
 End of Footer
