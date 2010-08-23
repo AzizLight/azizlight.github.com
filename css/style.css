@@ -170,7 +170,6 @@ ul.post-list
 ul.post-list li
 {
     padding: 5px 0;
-    position: relative;
 }
 ul.post-list li:first-child
 {
@@ -194,6 +193,10 @@ ul.post-list li a:hover
 {
     color: #c00;
 }
+ul.post-list li span:first-child
+{
+    position: relative;
+}
 ul.post-list li span.pointer
 {
     display: none;
@@ -201,7 +204,7 @@ ul.post-list li span.pointer
     left: 0;
     margin-left: -10px;
 }
-ul.post-list li:hover span.pointer
+ul.post-list li span:first-child:hover span.pointer
 {
     display: inline;
 }
