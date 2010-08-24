@@ -1,0 +1,28 @@
+---
+layout: nil
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>Aziz, Light!</title>
+ <link href="http://blog.azizlight.me/atom.xml" rel="self"/>
+ <link href="http://blog.azizlight.me/"/>
+ <updated>{{ site.time | date_to_xmlschema }}</updated>
+ <id>http://blog.azizlight.me/</id>
+ <author>
+   <name>Aziz Light</name>
+   <email>aziz@azizlight.me</email>
+   <uri>http://blog.azizlight.me/</uri>
+ </author>
+
+ {% for post in site.posts %}
+ <entry>
+   <title>{{ post.title }}</title>
+   <link href="http://blog.azizlight.me{{ post.url }}"/>
+   <updated>{{ post.date | date_to_xmlschema }}</updated>
+   <id>http://blog.azizlight.me{{ post.id }}</id>
+   <content type="html">{{ post.content | xml_escape }}</content>
+ </entry>
+ {% endfor %}
+ 
+</feed>
